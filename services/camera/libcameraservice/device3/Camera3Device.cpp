@@ -2612,10 +2612,14 @@ status_t Camera3Device::configureStreamsLocked(int operatingMode,
         // tag is not the application's package name (e.g. com.android.camera).
         status_t tagStatus = CameraMetadata::getTagFromName(
                 CAMERA_PACKAGE_NAME, vTags.get(), &tag);
+#ifdef XIAOMI_SESSION_CLIENT_NAME
+        // Preserve the product's package setting. This provider-specific fallback
+        // is an independent opt-in, not a reinterpretation of that setting.
         if (tagStatus != OK) {
             tagStatus = CameraMetadata::getTagFromName(
                     "com.xiaomi.sessionparams.clientName", vTags.get(), &tag);
         }
+#endif
         if (tagStatus == OK && vTags->getTagType(tag) == TYPE_BYTE) {
             const std::string& pkgName = mSessionClientPackageName;
             if (!pkgName.empty()) {
